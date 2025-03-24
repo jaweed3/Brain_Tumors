@@ -1,6 +1,7 @@
 import  requests
 import pandas as pd
 import sklearn as skl
+import matplotlib.pyplot as plt
 import tensorflow as tf
 
 IMG_SIZE = 256
@@ -35,5 +36,27 @@ def load_dataset(ds_dir):
         image_size=(IMG_SIZE, IMG_SIZE, 3),
         batch_size=BATCH_SIZE
     )
+    print(f'Class Training Dataset: {train_dir.class_names}')
+    print(f'Class Validation Dataset: {val_dir.class_names}')
     return train_dir, val_dir
 
+def plot_dataset(train_ds, val_ds):
+    plt.figure(figsize=(12, 8))
+    for images, labels in train_ds.take(1):
+        for i in range(9):
+            ax = plt.subplot(3, 3, i + 1)
+            plt.imshow(images[i].numpy().astype('uint8'))
+            plt.title(f"Train Dataset: ", train_ds.class_names[labels[i]])
+            plt.axis('off')
+            plt.show()
+        
+    for images, labels in val_ds.take(1):
+        for i in range(9):
+            ax = plt.subplot(3, 3, i + 1)
+            plt.imshow(images[i].numpy().astype('uint8'))
+            plt.title(f"Validation Dataset: ", val_ds.class_names[labels[i]])
+            plt.axis('off')
+            plt.show()
+
+def preprocess_ds(train_ds, val_ds):
+    AUTOTUNE = tf.data.AUTOTUNE()

@@ -35,3 +35,5 @@ def load_dataset(ds_dir):
         image_size=(IMG_SIZE, IMG_SIZE, 3),
         batch_size=BATCH_SIZE
     )
+    return train_dir, val_dir
+

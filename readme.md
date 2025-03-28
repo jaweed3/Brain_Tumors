@@ -20,18 +20,21 @@ Dataset source: *Provide dataset link here if available.*
 
 ## Installation
 
-### Prerequisites
-Make sure you have Python and required libraries installed:
+Instalation for this projects including Conda for installing Python 3.11.0, if your python version is above 3.11.0, make sure you have conda for Compatible Python Instalation. 
 
-```bash
-pip install -r requirements.txt
-```
+There is few ways to testing this project, if your Python Version is 3.11.0 or below, you should can run this code :
 
 ### Clone the Repository
 ```bash
 git clone https://github.com/your-repo/tensorflow-brain-tumor.git
 cd tensorflow-brain-tumor
 ```
+
+### Prerequisites
+```bash
+pip install -r requirements.txt
+```
+
 
 ## Training the Model
 ```python
@@ -62,6 +65,15 @@ The API will be available at `http://127.0.0.1:8000`.
 │   ├── index.html          # Frontend UI
 ```
 
+
+## Instalation for Python above 3.11.0
+You Should install Conda environment for running this Application,
+here is the steps:
+```
+conda create --name medical_env python=3.11.0
+conda activate medical_env
+pip install -r requirements.txt
+```
 ## Deployment
 To deploy the model on a cloud server (e.g., AWS, GCP, or Heroku), follow the specific cloud provider’s instructions for FastAPI deployment.
 

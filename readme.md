@@ -24,7 +24,7 @@ Dataset source: *Provide dataset link here if available.*
 Make sure you have Python and required libraries installed:
 
 ```bash
-pip install tensorflow keras fastapi uvicorn opencv-python pillow numpy matplotlib
+pip install -r requirements.txt
 ```
 
 ### Clone the Repository

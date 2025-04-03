@@ -109,10 +109,33 @@ class PredictModel(MedicalModel):
             print(f"Error during the Prediction: {e}")
             return None
 
+def main():
+    try:
+        # Initialize the model
+        model = PredictModel(units=64, layers=2)
+
+        # Load the file
+        file_path = model.load_file()
+        if not file_path:
+            raise ValueError("No file Selected")
+        
+        # Load pretrained Model
+        model_path = os.path.join('model', 'model.keras')
+        if not model_path:
+            raise ValueError("Model Path is not valid, Please Check the path")
+        model.load_trained_model(model_path)
+
+        # Displaying The Selected Image
+        model.plot_selected_file(file_path)
+
+        # Make Prediction
+        result = model.predict(file_path)
+        if result:
+            print(f"Prediction Completed: {result['class_name']} with confidence {result['confidence']*100:2.f}%")
+
+    except Exception as e:
+        print(f"Error in Main Function: {e}")
+        return None
+
 if __name__ == '__main__':
-    model = PredictModel(units=64, layers=2)
-    model_path = 'model/medical_model.keras'
-    model.load_trained_model(model_path)
-    file_path = model.load_file()
-    model.plot_selected_file(file_path)
-    model.predict(file_path)
+    main()

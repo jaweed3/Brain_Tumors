@@ -59,22 +59,42 @@ class PredictModel(MedicalModel):
             return None
 
     def plot_selected_file(self, file_path):
-        img = mpimg.imread(file_path)
-        plt.figure(figsize=(10, 10))
-        plt.title("Selected Image")
-        plt.axis('off')
-        plt.imshow(img)
+        '''
+        Plotting the selected file using matplotlib image library
+        '''
+        try:
+            if not os.path.exists(file_path):
+                raise FileNotFoundError(f"File Not Found: {file_path}")
+            img = mpimg.imread(file_path)
+            plt.figure(figsize=(10, 10))
+            plt.title("Selected Image")
+            plt.axis('off')
+            plt.imshow(img)
+            plt.show()
+        except Exception as e:
+            print(f"Error When Plottting the Image: {e}")
 
     def predict(self, file_path):
-        img = tf.keras.utils.load_img(file_path, target_size=(256, 256))
-        img = tf.keras.utils.img_to_array(img)
-        img = tf.expand_dims(img, axis=0)
-        img = tf.keras.applications.resnet50.preprocess_input(img)
-        prediction = self.model.predict(img)
-        prediction = tf.argmax(prediction, axis=1).numpy()[0]
-        class_names = ['']
-        return prediction
-    
+        '''
+        Predicting the selected class with loaded model before
+        '''
+        try:
+            if not file_path or not os.path.exists(file_path):
+                raise ValueError("File Path is not Valid or The File Does Not Exist")
+            if self.model is None:
+                raise ValueError("Model is not loaded.Please load the model first")
+            
+            # Load and Preprocess the selected image
+            img = tf.keras.utils.load_img(file_path, target_size=(256, 256))
+            img = tf.keras.utils.img_to_array(img)
+            img = tf.expand_dims(img, axis=0)
+            img = tf.keras.applications.resnet50.preprocess_input(img)
+
+            # Make Prediction
+            prediction = self.model.predict(img)
+            prediction_class_idx = tf.argmax(prediction, axis=1).numpy()[0]
+            
+                
 if __name__ == '__main__':
     model = PredictModel(units=64, layers=2)
     model_path = 'model/medical_model.keras'

@@ -12,27 +12,52 @@ class PredictModel(MedicalModel):
     def __init__(self, units, layers, **kwargs):
         super().__init__(units, layers, **kwargs)
         self.model = None
-    
+        self.class_name = ['glioma', 'meningioma', 'pituitary tumor', 'no tumor']
+        self.file_path = None
+
     def load_file(self):
-        root = tk.Tk()
-        root.title("Tkinter Open File Dialog")
-        root.resizable(True, True)
-        root.geometry(300, 200)
+        '''
+        Trying to open load file dialog using tkinter
+        '''
+        try:
 
-        root.withdraw()
-        file_path = fd.askopenfilename(title="Select an Image Files")
-        root.destroy()
-        show_info = tk.Label(root, text='File Selected', message=file_path)
-        open_button = tk.Button(root, text="Open File", command=root.quit)
+            root = tk.Tk()
+            root.title("Tkinter Open File Dialog")
+            root.resizable(True, True)
+            root.geometry(300, 200)
 
-        open_button.pack()
-        root.mainloop()
-        return file_path
+            root.withdraw()
+            file_path = fd.askopenfilename(
+                title="Select an Image Files",
+                filetypes=[
+                    ("Image Files", '*.png', '*.jpg', '*.jpeg'),
+                    ("All Files", '*.*')
+                ])
+            root.destroy()
+
+            if not file_path:
+                raise ValueError("No File Selected")
+            
+            return file_path
+        
+        except Exception as e:
+            print('f"Error Loading File: {e}')
+            return None
     
     def load_trained_model(self, model_path):
-        self.model = tf.keras.models.load_model(model_path)
-        return self.model
-    
+        '''
+        Loading model with specified path
+        '''
+        try:
+            if not os.path.exists(model_path):
+                raise FileNotFoundError(f"Model file not found: {model_path}")
+            self.model = tf.keras.models.load_model(model_path)
+            print(f"Model loaded from {model_path}")
+            return self.model
+        except Exception as e:
+            print(f"Error loading model: {e}")
+            return None
+
     def plot_selected_file(self, file_path):
         img = mpimg.imread(file_path)
         plt.figure(figsize=(10, 10))

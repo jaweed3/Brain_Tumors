@@ -4,7 +4,7 @@ import tensorflow as tf
 
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(project_root)
-
+from src.predict import PredictModel
 from src.model import MedicalModel
 from src.evaluate_model import EvaluateNtrain
 from data.prepare_data import DatasetPreprocessor
@@ -64,3 +64,4 @@ if __name__ == '__main__':
     evaluator.plot_model(
         history=history
     )
+

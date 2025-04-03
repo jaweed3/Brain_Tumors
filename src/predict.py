@@ -93,8 +93,22 @@ class PredictModel(MedicalModel):
             # Make Prediction
             prediction = self.model.predict(img)
             prediction_class_idx = tf.argmax(prediction, axis=1).numpy()[0]
-            
-                
+
+            # Get class name and confidence
+            prediction_class = self.class_name[prediction_class_idx]
+            confidence = prediction[0][prediction_class_idx] * 100
+
+            print(f"Prediction: {prediction_class}, Confidence: {confidence:.2f}%")
+            return {
+                'class_index': prediction_class_idx,
+                'class_name': prediction_class,
+                'confidence': float(confidence)
+            }
+        
+        except Exception as e:
+            print(f"Error during the Prediction: {e}")
+            return None
+
 if __name__ == '__main__':
     model = PredictModel(units=64, layers=2)
     model_path = 'model/medical_model.keras'

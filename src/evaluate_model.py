@@ -8,20 +8,23 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from src.model import MedicalModel
-from data.prepare_data import DatasetPreprocessor
+from src.prepare_data import DatasetPreprocessor
 
 BATCH_SIZE = 32
 EPOCHS = 10
 
 class EvaluateNtrain(MedicalModel):
-    def __init__(self, units=64, layers=2, **kwargs):
+    def __init__(self, model=None, units=64, layers=2, **kwargs):
         super(EvaluateNtrain, self).__init__(units=units, layers=layers, **kwargs)
-        self.model = MedicalModel(units=64, layers=2)
+        if model is None:
+            self.model = self.model = MedicalModel(units=64, layers=2)
+        else:
+            self.model = model
         ds_dir = 'data/'
         self.preprocess = DatasetPreprocessor()
         self.train_ds, self.test_ds = self.preprocess.load_dataset()
     
-    def train(self):
+    def train(self, train_data, val_data, epochs=EPOCHS, batch_size=BATCH_SIZE):
         self.model.build_model(input_shape=(None, 256, 256, 3))
 
         early_stopping = [
@@ -45,11 +48,12 @@ class EvaluateNtrain(MedicalModel):
         ]
 
         history = self.model.fit(
-            self.train_ds,
-            epochs=EPOCHS,
-            batch_size=BATCH_SIZE,
+            train_data,
+            epochs=epochs,
+            batch_size=batch_size,
             verbose=1,
-
+            validation_data=val_data,
+            callbacks=early_stopping
         )
         return history
     

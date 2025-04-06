@@ -4,9 +4,10 @@ import zipfile
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
-class DatasetPreprocessor:
-    def __init__(self, ds_dir, img_size=256, batch_size=32):
-        self.ds_dir = ds_dir
+@tf.autograph.experimental.do_not_convert
+class DatasetPreprocessor: 
+    def __init__(self, ds_path='data', img_size=256, batch_size=32):
+        self.ds_dir = ds_path
         self.img_size = img_size
         self.batch_size = batch_size
         self.train_ds = None

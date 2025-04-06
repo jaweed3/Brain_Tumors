@@ -1,4 +1,5 @@
 import os 
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 import sys
 import tensorflow as tf
 import matplotlib.pyplot as plt
@@ -11,7 +12,7 @@ sys.path.append(project_root)
 from src.model import MedicalModel
 from src.predict import PredictModel
 from src.evaluate_model import EvaluateNtrain
-from data.prepare_data import DatasetPreprocessor
+from src.prepare_data import DatasetPreprocessor
 
 BATCH_SIZE = 32
 EPOCHS = 10
@@ -26,12 +27,18 @@ def parse_argument():
 
 def train_model(preprocessor):
     '''Training the model with the processed dataset'''
-    print('Training the Model....')
+    print('=== Training Stage is Started ===')
 
     model = MedicalModel(units=64, layers=2)
+    
+    model.compile(
+        optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+        loss=tf.keras.losses.CategoricalCrossentropy(from_logits=True),
+        metrics=['accuracy', 'precision', 'recall', 'AUC']
+    )
+
     evaluator = EvaluateNtrain(model=model, units=64, layers=2)
 
-    evaluator.compile_model()
     history = evaluator.train(
         train_ds=preprocessor.train_ds,
         test_ds=preprocessor.test_ds,
@@ -51,7 +58,7 @@ def train_model(preprocessor):
 
     evaluator.save_model(
         model=model,
-        model_dir='model'
+        model_dir='model',
         filepath='brain_tumor_model.keras'
     )
 
@@ -61,12 +68,12 @@ def train_model(preprocessor):
 
 def prepare_data():
     '''Prepare and Preprocess the Dataset'''
-    print('preparing the Dataset....')
+    print('=== Data Preparation Stage ===')
 
     ds_dir = 'data/'
     os.makedirs(ds_dir, exist_ok=True)
 
-    preprocessor = DatasetPreprocessor(ds_dir=ds_dir)
+    preprocessor = DatasetPreprocessor(ds_path=ds_dir, img_size=256, batch_size=BATCH_SIZE)
     file_name = preprocessor.install_ds()
     if file_name :
         if preprocessor.unzip_ds(file_name):
@@ -83,7 +90,7 @@ def prepare_data():
 
 def predict_model():
     '''Prediction Stage for the selected Images'''
-    print('Prediction Stage is Beginning....')
+    print('=== Prediction Stage is Started ===')
     predictor = PredictModel(units=64, layers=2)
 
     if not os.path.exists(MODEL_PATH):

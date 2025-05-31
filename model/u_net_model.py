@@ -1,4 +1,4 @@
-from .u_net_part import *
+from u_net_part import *
 
 class UNet(nn.Module):
     def __init__(self, n_channels, n_classes, bilinear=False):
